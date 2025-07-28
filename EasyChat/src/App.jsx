@@ -22,7 +22,7 @@ function App() {
   ])
 
   return (
-    <div className="bg-[url('./assets/bgImage.svg')] bg-contain text-white">
+    <div className="min-h-screen w-full bg-[url('./assets/bgImage.svg')] bg-cover text-white">
       <RouterProvider router={router} />
     </div>
 )
