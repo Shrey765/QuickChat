@@ -1,7 +1,16 @@
-import React from "react";
+import React, {useRef, useEffect} from "react";
 import assets, {messagesDummyData} from "../assets/assets";
+import {formatMessageTime} from "../lib/utils";
 
 export default function ChatContainer({selectedUser, setSelectedUser}) {
+    const scrollEnd = useRef();
+
+    useEffect(() => {
+        if(scrollEnd.current){
+            scrollEnd.current.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [])
+
   return selectedUser ? (
     <div className="h-full overflow-scroll relative backdrop-blur-lg">
       <div className="flex items-center gap-3 py-3 mx-4 border-b border-stone-500">
@@ -10,31 +19,82 @@ export default function ChatContainer({selectedUser, setSelectedUser}) {
             Martin Johnson
             <span className="w-2 h-2 rounded-full bg-green-500"></span>
         </p>
-        <img onClick={() => setSelectedUser(null)} src={assets.arrow_icon} className="md:hidden max-w-7 cursor-pointer"/>
+        <img onClick={() => setSelectedUser(null)} src={assets.arrow_icon} className="max-w-7 cursor-pointer"/>
         <img src={assets.help_icon} className="max-md:hidden max-w-5"/>
       </div>
 
-      <div className="flex flex-col h-[calc(100%-120px)] overflow-y-scroll p-3 pb-6">
-        {messagesDummyData.map((msg, index) => (
-            <div key={index} className={`flex items-end gap-2 justify-end ${msg.senderId !== '680f50e4f10f3cd28382ecf9' && 'flex-row-reverse'}`}>
-                {msg.image ? (
-                    <img src={msg.image} className="max-w-[230px] border
-                    border-gray-700 rounded-lg overflow-hidden mb-8" />
-                ) : (
-                    <p className={`p-2 max-w-[200px] md:text-sm font-light
-                    rounded-lg mb-8 break-all bg-violet-500/30 text-white ${msg
-                        .senderId !== '680f50e4f10f3cd28382ecf9' ? 'rounded-br-none' : 'rounded-bl-none'
-                    }`}>
+      <div className="flex flex-col flex-1 h-[calc(100%-120px)] overflow-y-auto px-4 py-6 gap-5 backdrop-blur-lg rounded-xl shadow-inner">
+        {messagesDummyData.map((msg, index) => {
+            const isCurrentUser = msg.senderId === '680f50e4f10f3cd28382ecf9';
+
+            return (
+            <div
+                key={index}
+                className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} w-full`}
+            >
+                <div className={`flex items-end gap-3 max-w-[75%] ${isCurrentUser ? 'flex-row-reverse text-right' : 'text-left'}`}>
+                {/* Avatar */}
+                <img
+                    src={isCurrentUser ? assets.avatar_icon : assets.profile_martin}
+                    className="w-9 h-9 rounded-full border border-violet-400 shadow"
+                />
+
+                <div>
+                    {/* Text or Image */}
+                    {msg.image ? (
+                    <img
+                        src={msg.image}
+                        className="max-w-[260px] border border-gray-700 rounded-lg overflow-hidden shadow-md"
+                    />
+                    ) : (
+                    <p
+                        className={`p-3 text-[0.95rem] leading-snug font-normal rounded-xl break-words shadow-md 
+                        ${isCurrentUser
+                        ? 'bg-violet-600 text-white rounded-br-none'
+                        : 'bg-white text-gray-900 rounded-bl-none'
+                        }`}
+                    >
                         {msg.text}
                     </p>
-                )}
-                <div className="text-center text-xs">
-                    <img src={msg.senderId === '680f50e4f10f3cd28382ecf9' ? assets.avatar_icon : assets.profile_martin} className="w-7 rounded-full"/>
-                    <p className="text-gray-500">{msg.createdAt}</p>
+                    )}
+                    {/* Timestamp */}
+                    <p className="text-[0.7rem] text-gray-400 mt-1">
+                    {formatMessageTime(msg.createdAt)}
+                    </p>
+                </div>
                 </div>
             </div>
-        ))}
-      </div>
+            );
+        })}
+
+        <div ref={scrollEnd}></div>
+        </div>
+
+        <div className="absolute bottom-0 left-0 right-0 flex items-center gap-2 p-3 backdrop-blur-lg">
+            <div className="flex flex-1 items-center bg-gray-800/70 px-4 py-2 rounded-full shadow-inner">
+                <input
+                type="text"
+                placeholder="Send a message"
+                className="flex-1 text-sm px-2 py-1 bg-transparent border-none outline-none text-white placeholder-gray-400"
+                />
+                <input type="file" id="image" accept="image/png, image/jpeg" hidden />
+                <label htmlFor="image">
+                <img
+                    src={assets.gallery_icon}
+                    className="w-5 h-5 mr-2 cursor-pointer opacity-80 hover:opacity-100"
+                />
+                </label>
+            </div>
+
+            <button className="p-2 bg-gray-800/70 rounded-full hover:bg-gray-700 transition">
+                <img
+                src={assets.send_button}
+                className="w-6 h-6 cursor-pointer"
+                />
+            </button>
+            </div>
+
+
     </div>
   ) : (
     <div className="flex flex-col items-center justify-center gap-2 text-gray-500 bg-white/10 max-md:hidden">
