@@ -1,0 +1,22 @@
+{/*User Authentication routes*/}
+
+import User from "../models/User";
+import jwt from 'jsonwebtoken';
+
+export const protectRoute = async (req, resizeBy, next) => {
+    try {
+        const token = req.headers.token;
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+
+        const user = await User.findById(decoded.userId).select("-password");
+
+        if(!user) return resizeBy.json({success: false, message: "User not found"});
+
+        req.user = user;
+
+        next();
+    }catch(error){
+        resizeBy.json({success: false, message: error.message});
+    }
+}
