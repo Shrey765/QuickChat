@@ -27,11 +27,16 @@ import cloudinary from '../lib/cloudinary.js';
             email, fullName, password: hashedPassword, bio
         });
         
-        token = generateToken(newUser._id);
-        res.json({success: true, userData: newUser, token, message: "Account created Successfully!!"})
+        const token = generateToken(newUser._id);
+        return res.json({  
+            success: true, 
+            userData: newUser, 
+            token, 
+            message: "Account created Successfully!!"
+        })
     } catch (error) {
         console.log(error.message);
-        res.json({success: false, message: error.message})
+        return res.json({success: false, message: error.message})
     }
  }
 
@@ -49,7 +54,11 @@ import cloudinary from '../lib/cloudinary.js';
         }
 
         const token = generateToken(user._id);
-        res.json({success: true, user, token, message: "Login Successful"})
+        return res.json({
+            success: true, 
+            userData: user, 
+            token, message: "Login Successful"
+        })
     } catch (error) {
         console.log(error.message);
         res.json({success: false, message: error.message})

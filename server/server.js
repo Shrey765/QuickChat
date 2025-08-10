@@ -2,50 +2,48 @@ import express from 'express';
 import "dotenv/config";
 import cors from 'cors';
 import http from 'http';
-import {connectDB} from './lib/db.js'
+import { connectDB } from './lib/db.js';
 import userRouter from './routes/userRoutes.js';
 import messageRouter from './routes/messageRoutes.js';
-import {Server} from 'socket.io';
+import { Server } from 'socket.io';
 
-//create Express app and HTTP server
 const app = express();
 const server = http.createServer(app);
 
-//initialize soket.io
 export const io = new Server(server, {
-    cors: {origin: "*"}
-})
+  cors: {
+    origin: 'http://localhost:5174',
+    credentials: true
+  }
+});
 
-//Store online users
-export const userSocketMap = {}; //{userId: socketId}
+export const userSocketMap = {};
 
-// Socket.io connection handler
-io.on("connection", (socket)=> {
-    const userId = socket.handshake.query.userId;
-    console.log("User Connected", userId);
+io.on("connection", (socket) => {
+  const userId = socket.handshake.query.userId;
+  console.log("User Connected", userId);
 
-    if(userId) userSocketMap[userId] = socket.id;
+  if (userId) userSocketMap[userId] = socket.id;
 
-    //Emit online users to connect clients
+  io.emit("getOnlineUsers", Object.keys(userSocketMap));
+
+  socket.on("disconnect", () => {
+    console.log("User Disconnected", userId);
+    delete userSocketMap[userId];
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
+  });
+});
 
-    socket.on("disconnect", ()=> {
-        console.log("User Disconnected", userId);
-        delete userSocketMap[userId];
-        io.emit("getOnlineUsers", Object.keys(userSocketMap));
-    })
-})
+app.use(cors({
+  origin: 'http://localhost:5174',
+  credentials: true
+}));
+app.use(express.json({ limit: '4mb' }));
 
-//Middleware Setup
-app.use(express.json({limit: '4mbnode server.js'}));
-app.use(cors());
-
-//route Setup
 app.use("/api/status", (req, res) => res.send("server is Live"));
-app.use('/api/auth', userRouter);
+app.use("/api/auth", userRouter);
 app.use("/api/messages", messageRouter);
 
-//connext to MONGODB
 await connectDB();
 
 const PORT = process.env.PORT || 5002;
