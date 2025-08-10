@@ -1,28 +1,32 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import HomePage from './pages/HomePage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import {Toaster} from 'react-hot-toast'
+import { Navigate } from 'react-router-dom'
+import { AuthContext } from '../context/AuthContext.jsx'
 
 function App() {
-  
+  const {authUser} = useContext(AuthContext);
   const router = createBrowserRouter([
     {
       path: '/',
-      element: <HomePage />
+      element: authUser ? <HomePage /> : <Navigate to="/login" />
     },
     {
       path: '/login',
-      element: <LoginPage />
+      element: !authUser ? <LoginPage /> : <Navigate to='/' />
     },
     {
       path: '/profile',
-      element: <ProfilePage />
+      element: authUser ? <ProfilePage /> : <Navigate to='/login' />
     }
   ])
 
   return (
     <div className="min-h-screen w-full bg-[url('./assets/bgImage.svg')] bg-cover text-white">
+      <Toaster />
       <RouterProvider router={router} />
     </div>
 )
