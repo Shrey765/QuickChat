@@ -12,7 +12,7 @@ const server = http.createServer(app);
 
 export const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:5174',
+    origin: "*",
     credentials: true
   }
 });
@@ -35,12 +35,15 @@ io.on("connection", (socket) => {
 });
 
 app.use(cors({
-  origin: 'http://localhost:5174',
+  origin: "http://localhost:5174",
   credentials: true
 }));
-app.use(express.json({ limit: '4mb' }));
+
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 app.use("/api/status", (req, res) => res.send("server is Live"));
+
 app.use("/api/auth", userRouter);
 app.use("/api/messages", messageRouter);
 

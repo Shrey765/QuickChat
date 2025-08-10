@@ -12,7 +12,8 @@ import cloudinary from '../lib/cloudinary.js';
         if(!fullName || !email || !password || !bio){
             return res.json({success: false, message: "missing details"})
         }
-
+        console.log(req.body);
+        
         {/*User Already exist*/}
         const user = await User.findOne({email})
         if(user){
@@ -26,8 +27,11 @@ import cloudinary from '../lib/cloudinary.js';
         const newUser = await User.create({
             email, fullName, password: hashedPassword, bio
         });
+        console.log("newUser ",newUser);
         
         const token = generateToken(newUser._id);
+        console.log("created token ",token);
+        
         return res.json({  
             success: true, 
             userData: newUser, 

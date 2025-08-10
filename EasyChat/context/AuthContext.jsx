@@ -49,6 +49,8 @@ const AuthProvider = ({ children }) => {
     //Login function to handle user authentication and socket connection
     const login = async (state, credentials) => {
         try {
+            console.log("SIGNUP PAYLOAD:", credentials, 
+            "Size (approx):", new Blob([JSON.stringify(credentials)]).size, "bytes");
             const {data} = await axios.post(`/api/auth/${state}`, credentials);
             if(data.success){
                 setAuthUser(data.userData);
