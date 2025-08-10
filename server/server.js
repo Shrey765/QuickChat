@@ -43,10 +43,10 @@ app.use(cors());
 //route Setup
 app.use("/api/status", (req, res) => res.send("server is Live"));
 app.use('/api/auth', userRouter);
-app.use("api/messages", messageRouter);
+app.use("/api/messages", messageRouter);
 
 //connext to MONGODB
 await connectDB();
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5002;
 server.listen(PORT, () => console.log(`Server is running on port ${PORT}`));

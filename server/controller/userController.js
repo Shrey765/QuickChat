@@ -16,7 +16,7 @@ import cloudinary from '../lib/cloudinary.js';
         {/*User Already exist*/}
         const user = await User.findOne({email})
         if(user){
-            return res.jason({success: false, message: "User already present with given Email"})
+            return res.json({success: false, message: "User already present with given Email"})
         }
 
         {/*pasword ecryption and create newUser*/}
@@ -52,7 +52,7 @@ import cloudinary from '../lib/cloudinary.js';
         res.json({success: true, user, token, message: "Login Successful"})
     } catch (error) {
         console.log(error.message);
-        res.jason({success: false, message: error.message})
+        res.json({success: false, message: error.message})
         
     }
  }

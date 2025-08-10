@@ -1,6 +1,6 @@
-import User from '../models/User'
-import Message from '../models/Message';
-import cloudinary from '../lib/cloudinary';
+import User from '../models/User.js'
+import Message from '../models/Message.js';
+import cloudinary from '../lib/cloudinary.js';
 import {io, userSocketMap} from '../server.js'
 
 export const getUserForSidebar = async (req, res) => {
@@ -22,10 +22,10 @@ export const getUserForSidebar = async (req, res) => {
             }
         })
         await Promise.all(promises);
-        res.jason({success: true, users: filteredUsers, unseenMessages})
+        res.json({success: true, users: filteredUsers, unseenMessages})
     } catch (error) {
         console.log(error.message);
-        res.jason({process: false, message: error.Message})
+        res.json({process: false, message: error.Message})
     }
 }
 
@@ -43,10 +43,10 @@ export const getMessages = async (req, res) => {
         })
 
         await Message.updateMany({senderId: selectedUserId, receiverId: myId}, {seen: true});
-        res.jason({success: true, messages});
+        res.json({success: true, messages});
     } catch (error) {
         console.log(error.message);
-        res.jason({process: false, message: error.Message})
+        res.json({process: false, message: error.Message})
     }
 }
 
@@ -55,10 +55,10 @@ export const markMessageAsSeen = async (req, res) => {
     try {
         const {id} = req.params;
         await Message.findByIdAndUpdate(id, {seen: true});
-        res.jason({success: true});
+        res.json({success: true});
     } catch (error) {
         console.log(error.message);
-        res.jason({process: false, message: error.Message})
+        res.json({process: false, message: error.Message})
     }
 }
 
@@ -88,9 +88,9 @@ export const sendMessage = async (req, res) => {
             io.to(receiverSocketId).emit("newMessage", newMessage)
         }
 
-        res.jason({process: false, newMessage});
+        res.json({process: false, newMessage});
     } catch (error) {
         console.log(error.message);
-        res.jason({process: false, message: error.Message})
+        res.json({process: false, message: error.Message})
     }
 }
