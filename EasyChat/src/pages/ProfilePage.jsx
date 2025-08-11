@@ -1,17 +1,33 @@
-import react, {useState} from 'react'
+import react, {useState, useContext} from 'react'
 import { useNavigate } from 'react-router'
 import assets from '../assets/assets';
+import { AuthContext } from '../../context/AuthContext';
 
 export default function ProfilePage(){
+
+    const {authUser, updateProfile} = useContext(AuthContext)
+
     const [selectImg, setSelectImg] = useState(null);
-    const [name, setName] = useState('Anika');
-    const [bio, setBio] = useState('Hello, I am Anika!');
+    const [name, setName] = useState(authUser.fullName);
+    const [bio, setBio] = useState(authUser.bio);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         // Handle form submission logic here
-        navigate('/');
+        if(!selectImg){
+            await updateProfile({fullName: name, bio});
+            navigate('/');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.readAsDataURL(selectImg);
+        reader.onload = async () => {
+            const base64Image = reader.result;
+            await updateProfile({profilePic: base64Image, fullName: name, bio});
+            navigate('/');
+        }
     };
 
     return(
@@ -62,9 +78,10 @@ export default function ProfilePage(){
 
             {/* Side Image */}
             <img
-            src={assets.logo_icon}
+            src={authUser.profilePic || assets?.logo_icon}
             alt="Logo"
-            className="max-w-[140px] aspect-square object-contain rounded-full mx-auto max-sm:mt-6"
+            className={`max-w-[140px] aspect-square rounded-full object-contain mx-auto max-sm:mt-6 
+                ${selectImg && 'rounded-full'}`}
             />
         </div>
         </div>

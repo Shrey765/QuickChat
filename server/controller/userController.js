@@ -12,7 +12,6 @@ import cloudinary from '../lib/cloudinary.js';
         if(!fullName || !email || !password || !bio){
             return res.json({success: false, message: "missing details"})
         }
-        console.log(req.body);
         
         {/*User Already exist*/}
         const user = await User.findOne({email})
