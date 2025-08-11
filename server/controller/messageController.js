@@ -22,10 +22,17 @@ export const getUserForSidebar = async (req, res) => {
             }
         })
         await Promise.all(promises);
-        res.json({success: true, users: filteredUsers, unseenMessages})
+        return res.json({
+            success: true, 
+            users: filteredUsers, 
+            unseenMessages
+        })
     } catch (error) {
         console.log(error.message);
-        res.json({process: false, message: error.Message})
+        return res.json({
+            success: false, 
+            message: error.Message
+        })
     }
 }
 
@@ -43,10 +50,13 @@ export const getMessages = async (req, res) => {
         })
 
         await Message.updateMany({senderId: selectedUserId, receiverId: myId}, {seen: true});
-        res.json({success: true, messages});
+        return res.json({success: true, messages});
     } catch (error) {
         console.log(error.message);
-        res.json({process: false, message: error.Message})
+        return res.json({
+            success: false, 
+            message: error.Message
+        })
     }
 }
 
@@ -55,10 +65,13 @@ export const markMessageAsSeen = async (req, res) => {
     try {
         const {id} = req.params;
         await Message.findByIdAndUpdate(id, {seen: true});
-        res.json({success: true});
+        return res.json({success: true});
     } catch (error) {
         console.log(error.message);
-        res.json({process: false, message: error.Message})
+        return res.json({
+            process: false, 
+            message: error.Message
+        })
     }
 }
 
@@ -67,7 +80,7 @@ export const markMessageAsSeen = async (req, res) => {
 export const sendMessage = async (req, res) => {
     try {
         const {text, image} = req.body;
-        const receiverId = req.params._id;
+        const receiverId = req.params.id;
         const senderId = req.user._id;
 
         let imageUrl;
@@ -88,9 +101,16 @@ export const sendMessage = async (req, res) => {
             io.to(receiverSocketId).emit("newMessage", newMessage)
         }
 
-        res.json({process: false, newMessage});
+        return res.json({
+            process: true, 
+            newMessage
+        });
+
     } catch (error) {
         console.log(error.message);
-        res.json({process: false, message: error.Message})
+        return res.json({
+            process: false, 
+            message: error.Message
+        })
     }
 }
