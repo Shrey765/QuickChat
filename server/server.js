@@ -35,7 +35,7 @@ io.on("connection", (socket) => {
 });
 
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "http://localhost:5174",
   credentials: true
 }));
 
@@ -49,5 +49,5 @@ app.use("/api/messages", messageRouter);
 
 await connectDB();
 
-const PORT = process.env.PORT || 5002;
+const PORT = process.env.PORT;
 server.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
