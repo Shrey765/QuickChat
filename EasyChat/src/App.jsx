@@ -25,7 +25,7 @@ function App() {
   ])
 
   return (
-    <div className="min-h-screen w-full bg-[url('./assets/bgImage.svg')] bg-cover text-white">
+    <div className="min-h-screen w-full bg-[url('/bgImage.svg')] bg-cover text-white">
       <Toaster />
       <RouterProvider router={router} />
     </div>
